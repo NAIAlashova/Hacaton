@@ -62,10 +62,10 @@ def first(message):
 markup2 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup2.add(KeyboardButton('греческое'))
 markup2.add(KeyboardButton('римское'))
-markup2.add(KeyboardButton('русского'))
-markup2.add(KeyboardButton('английского'))
-markup2.add(KeyboardButton('французского'))
-markup2.add(KeyboardButton('испанского'))
+markup2.add(KeyboardButton('русское'))
+markup2.add(KeyboardButton('английское'))
+markup2.add(KeyboardButton('французское'))
+markup2.add(KeyboardButton('испанское'))
 def second(message):
     right(message)
     global l
@@ -105,5 +105,4 @@ def last(message):
     bot.send_message(message.chat.id, ask(text, message.from_user.id))
     l = []
 
-bot.polling()
-# bot.infinity_polling()
+bot.infinity_polling()

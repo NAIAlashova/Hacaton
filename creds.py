@@ -17,7 +17,6 @@ def create_new_token():
             with open(IAM_TOKEN_PATH, "w") as token_file:
                 json.dump(token_data, token_file)
             logging.info("Получен new iam_token\n")
-            print('!!!!!')
             return response.json()
         else:
             logging.error(f"Ошибка получения iam_token. Статус-код: {response.status_code}\n")

@@ -7,13 +7,23 @@ from GPT import ask_gpt, count_tokens
 
 bot = telebot.TeleBot(get_bot_token())
 execute_query(config.query1)
-l = []
+l = {}
 
 def ask(text, id):
     ans = ask_gpt(text)
     tokens = count_tokens(ans)
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({id}, 'assistent', '{ans}', {tokens}) ;''')
     return ans
+def promt(l):
+    if '' in l[1]:
+        text = f'Придумай {l[-1]} кличек {l[0]} {l[1]}'
+        if l[2] == 'Да':
+            text += f'{l[3]} окраса'
+    else:
+        text = f'Придумай {l[-1]} {l[0]} имен {l[1]} происхождения'
+        if l[2] == 'Да':
+            text += f'со значанием {l[3]}'
+    return text
 def right(message):
     if '/' in message.text:
         if 'logging' in message.text:
@@ -44,11 +54,14 @@ def handle_about(message):
 def handle_logging(message):
     doc = open(config.LOGS, 'rb')
     doc = doc.read()
-    bot.send_message(message.chat.id, doc)
+    bot.send_document(message.chat.id, doc)
 
 markup1 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup1.add(KeyboardButton('мужское'))
 markup1.add(KeyboardButton('женское'))
+markup1.add(KeyboardButton('для кошки'))
+markup1.add(KeyboardButton('для собаки'))
+markup1.add(KeyboardButton('для грызуна'))
 @bot.message_handler(commands=['name'])
 def first(message):
     global l
@@ -57,53 +70,91 @@ def first(message):
         bot.send_message(message.chat.id, 'К сожалению, у вас закончились токены. Я не смогу вам ответить.')
         return
     bot.send_message(message.chat.id, 'Какоге имя ты хочешь?', reply_markup=markup1)
+    l[message.from_user.id] = []
     bot.register_next_step_handler(message, second)
 
 markup2 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup2.add(KeyboardButton('греческое'))
 markup2.add(KeyboardButton('римское'))
-markup2.add(KeyboardButton('русского'))
-markup2.add(KeyboardButton('английского'))
-markup2.add(KeyboardButton('французского'))
-markup2.add(KeyboardButton('испанского'))
+markup2.add(KeyboardButton('русское'))
+markup2.add(KeyboardButton('английское'))
+markup2.add(KeyboardButton('французское'))
+markup2.add(KeyboardButton('испанское'))
+markup2.add(KeyboardButton('японского'))
+markup3 = ReplyKeyboardMarkup(resize_keyboard=True)
+markup3.add(KeyboardButton('девочка'))
+markup3.add(KeyboardButton('мальчик'))
 def second(message):
     right(message)
     global l
-    l.append(message.text[0:-2] + 'их')
-    bot.send_message(message.chat.id, 'Какое происхождение у этого имени?', reply_markup=markup2)
-    bot.register_next_step_handler(message, third)
+    if not '' in message.text:
+        l[message.from_user.id].append(message.text[0:-2] + 'их')
+        bot.send_message(message.chat.id, 'Какое происхождение у этого имени?', reply_markup=markup2)
+        bot.register_next_step_handler(message, third_for_people)
+    else:
+        bot.send_message(message.chat.id, 'Это мальчик или девочка?', reply_markup=markup3)
+        bot.register_next_step_handler(message, third_for_pet)
 
-markup3 = ReplyKeyboardMarkup(resize_keyboard=True)
-markup3.add(KeyboardButton('Да'))
-markup3.add(KeyboardButton('Нет'))
-def third(message):
+markup4 = ReplyKeyboardMarkup(resize_keyboard=True)
+markup4.add(KeyboardButton('Да'))
+markup4.add(KeyboardButton('Нет'))
+def third_for_people(message):
     right(message)
     global l
-    l.append(message.text[0:-1]+'го')
-    bot.send_message(message.chat.id, 'Есть у этого имени значение?', reply_markup=markup3)
-    bot.register_next_step_handler(message, fourth)
+    l[message.from_user.id].append(message.text[0:-1]+'го')
+    bot.send_message(message.chat.id, 'Есть у этого имени значение?', reply_markup=markup4)
+    bot.register_next_step_handler(message, fourth_for_people)
 
-def fourth(message):
+def fourth_for_people(message):
     right(message)
     global l
-    l.append(message.text)
+    l[message.from_user.id].append(message.text)
     if message.text == 'Да':
         bot.send_message(message.chat.id, 'Напиши это значение')
         bot.register_next_step_handler(message, last)
     else:
         last(message)
 
+def third_for_pet(message):
+    right(message)
+    global l
+    if 'д' in message.text:
+        l[message.from_user.id].append(message.text[0:-1]+'и')
+    else:
+        l[message.from_user.id].append(message.text[0:-1] + 'а')
+    bot.send_message(message.chat.id, 'Хочешь указать его окрас?', reply_markup=markup4)
+    bot.register_next_step_handler(message, fourth_for_pet)
+
+def fourth_for_pet(message):
+    right(message)
+    global l
+    l[message.from_user.id].append(message.text)
+    if message.text == 'Да':
+        bot.send_message(message.chat.id, 'Напиши его в родительном падеже')
+        bot.register_next_step_handler(message, last)
+    else:
+        last(message)
+
+markup5 = ReplyKeyboardMarkup(resize_keyboard=True)
+markup5.add(KeyboardButton('1'))
+markup5.add(KeyboardButton('2'))
+markup5.add(KeyboardButton('5'))
 def last(message):
     right(message)
     global l
-    text = f'Напиши 2 {l[0]} имени {l[1]} происхождения'
-    if l[2] == 'Да':
-        text += f'со значением {message.text}'
+    l[message.from_user.id].append(message.text)
+    bot.send_message(message.chat.id, '', reply_markup=markup5)
+    bot.register_next_step_handler(message, ans)
+
+def ans(message):
+    right(message)
+    global l
+    l[message.from_user.id].append(message.text)
+    text = promt(l[message.from_user.id])
     tokens = count_tokens(text)
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({message.from_user.id}, 'user', '{text}', {tokens});''')
     text += '. Не пиши никакого пояснительного текста.'
     bot.send_message(message.chat.id, ask(text, message.from_user.id))
     l = []
 
-bot.polling()
-# bot.infinity_polling()
+bot.infinity_polling()

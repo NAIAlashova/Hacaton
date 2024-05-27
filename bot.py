@@ -16,13 +16,27 @@ def ask(text, id):
     return ans
 def promt(l):
     if '' in l[1]:
-        text = f'Придумай {l[-1]} кличек {l[0]} {l[1]}'
+        text = f'Придумай {l[-1]} '
+        if l[-1] == '1':
+            text += 'кличку '
+        elif l[-1] == '2':
+            text += 'клички '
+        else:
+            text += 'кличек '
+        text += f'{l[0]} {l[1]}'
         if l[2] == 'Да':
-            text += f'{l[3]} окраса'
+            text += f' {l[3]} окраса'
     else:
-        text = f'Придумай {l[-1]} {l[0]} имен {l[1]} происхождения'
+        text = f'Придумай {l[-1]} {l[0]} '
+        if l[-1] == '1':
+            text += 'имя '
+        elif l[-1] == '2':
+            text += 'имени '
+        else:
+            text += 'имен '
+        text += f'{l[1]} происхождения'
         if l[2] == 'Да':
-            text += f'со значанием {l[3]}'
+            text += f' со значанием {l[3]}'
     return text
 def right(message):
     if '/' in message.text:
@@ -143,7 +157,7 @@ def last(message):
     right(message)
     global l
     l[message.from_user.id].append(message.text)
-    bot.send_message(message.chat.id, '', reply_markup=markup5)
+    bot.send_message(message.chat.id, 'Сколько имен тебе нужно?', reply_markup=markup5)
     bot.register_next_step_handler(message, ans)
 
 def ans(message):

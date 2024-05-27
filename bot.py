@@ -44,13 +44,14 @@ def handle_about(message):
 def handle_logging(message):
     doc = open(config.LOGS, 'rb')
     doc = doc.read()
-    bot.send_document(message.chat.id, doc)
+    bot.send_message(message.chat.id, doc)
 
 markup1 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup1.add(KeyboardButton('мужское'))
 markup1.add(KeyboardButton('женское'))
 @bot.message_handler(commands=['name'])
 def first(message):
+    global l
     bot.send_message(message.chat.id, 'Если ты захочешь прекратить выбор имени, напиши команду /name.')
     if count_all_symbol(message.from_user.id) > 5000:
         bot.send_message(message.chat.id, 'К сожалению, у вас закончились токены. Я не смогу вам ответить.')
@@ -61,10 +62,10 @@ def first(message):
 markup2 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup2.add(KeyboardButton('греческое'))
 markup2.add(KeyboardButton('римское'))
-markup2.add(KeyboardButton('русское'))
-markup2.add(KeyboardButton('английское'))
-markup2.add(KeyboardButton('французское'))
-markup2.add(KeyboardButton('испанское'))
+markup2.add(KeyboardButton('русского'))
+markup2.add(KeyboardButton('английского'))
+markup2.add(KeyboardButton('французского'))
+markup2.add(KeyboardButton('испанского'))
 def second(message):
     right(message)
     global l
@@ -104,5 +105,5 @@ def last(message):
     bot.send_message(message.chat.id, ask(text, message.from_user.id))
     l = []
 
-
-bot.infinity_polling()
+bot.polling()
+# bot.infinity_polling()

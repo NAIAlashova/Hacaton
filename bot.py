@@ -101,7 +101,7 @@ markup3.add(KeyboardButton('мальчик'))
 def second(message):
     right(message)
     global l
-    if not '' in message.text:
+    if not 'для' in message.text:
         l[message.from_user.id].append(message.text[0:-2] + 'их')
         bot.send_message(message.chat.id, 'Какое происхождение у этого имени?', reply_markup=markup2)
         bot.register_next_step_handler(message, third_for_people)
@@ -164,6 +164,7 @@ def ans(message):
     right(message)
     global l
     l[message.from_user.id].append(message.text)
+    print(l)
     text = promt(l[message.from_user.id])
     print(text)
     tokens = count_tokens(text)

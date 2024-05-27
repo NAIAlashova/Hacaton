@@ -83,7 +83,7 @@ def first(message):
     if count_all_symbol(message.from_user.id) > 5000:
         bot.send_message(message.chat.id, 'К сожалению, у вас закончились токены. Я не смогу вам ответить.')
         return
-    bot.send_message(message.chat.id, 'Какоге имя ты хочешь?', reply_markup=markup1)
+    bot.send_message(message.chat.id, 'Какое имя ты хочешь?', reply_markup=markup1)
     l[message.from_user.id] = []
     bot.register_next_step_handler(message, second)
 
@@ -172,6 +172,5 @@ def ans(message):
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({message.from_user.id}, 'user', '{text}', {tokens});''')
     text += '. Не пиши никакого пояснительного текста.'
     bot.send_message(message.chat.id, ask(text, message.from_user.id))
-    l = []
 
 bot.infinity_polling()

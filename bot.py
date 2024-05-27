@@ -36,7 +36,7 @@ def promt(l):
             text += 'имен '
         text += f'{l[1]} происхождения'
         if l[2] == 'Да':
-            text += f' со значанием {l[3]}'
+            text += f' со значением {l[3]}'
     return text
 def right(message):
     if '/' in message.text:
@@ -165,6 +165,7 @@ def ans(message):
     global l
     l[message.from_user.id].append(message.text)
     text = promt(l[message.from_user.id])
+    print(text)
     tokens = count_tokens(text)
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({message.from_user.id}, 'user', '{text}', {tokens});''')
     text += '. Не пиши никакого пояснительного текста.'

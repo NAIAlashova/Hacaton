@@ -104,4 +104,5 @@ def last(message):
     bot.send_message(message.chat.id, ask(text, message.from_user.id))
     l = []
 
+
 bot.infinity_polling()

@@ -106,6 +106,7 @@ def second(message):
         bot.send_message(message.chat.id, 'Какое происхождение у этого имени?', reply_markup=markup2)
         bot.register_next_step_handler(message, third_for_people)
     else:
+        l[message.from_user.id].append(message.text)
         bot.send_message(message.chat.id, 'Это мальчик или девочка?', reply_markup=markup3)
         bot.register_next_step_handler(message, third_for_pet)
 

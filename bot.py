@@ -15,7 +15,7 @@ def ask(text, id):
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({id}, 'assistent', '{ans}', {tokens}) ;''')
     return ans
 def promt(l):
-    if '' in l[1]:
+    if 'для' in l[1]:
         text = f'Придумай {l[-1]} '
         if l[-1] == '1':
             text += 'кличку '
@@ -94,7 +94,7 @@ markup2.add(KeyboardButton('русское'))
 markup2.add(KeyboardButton('английское'))
 markup2.add(KeyboardButton('французское'))
 markup2.add(KeyboardButton('испанское'))
-markup2.add(KeyboardButton('японского'))
+markup2.add(KeyboardButton('японское'))
 markup3 = ReplyKeyboardMarkup(resize_keyboard=True)
 markup3.add(KeyboardButton('девочка'))
 markup3.add(KeyboardButton('мальчик'))

@@ -15,7 +15,7 @@ def ask(text, id):
     execute_query(f'''INSERT INTO Requests (user_id, role, contents, tokens) VALUES ({id}, 'assistent', '{ans}', {tokens}) ;''')
     return ans
 def promt(l):
-    if 'для' in l[1]:
+    if 'для' in l[0]:
         text = f'Придумай {l[-1]} '
         if l[-1] == '1':
             text += 'кличку '
